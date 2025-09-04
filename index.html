@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Minecraft Image Wiki</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Minecraft Image Wiki</h1>
+  <form id="uploadForm">
+    <label>
+      Image:
+      <input type="file" accept="image/*" id="imageInput" required>
+    </label>
+    <label>
+      Description:
+      <input type="text" id="descInput" placeholder="Describe your image" required>
+    </label>
+    <button type="submit">Upload</button>
+  </form>
+
+  <h2>Gallery</h2>
+  <div id="gallery"></div>
+
+  <script>
+    // Simple local image gallery - not persistent!
+    const form = document.getElementById('uploadForm');
+    const gallery = document.getElementById('gallery');
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const fileInput = document.getElementById('imageInput');
+      const descInput = document.getElementById('descInput');
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = document.createElement('img');
+        img.src = evt.target.result;
+        img.className = 'gallery-img';
+        const desc = document.createElement('div');
+        desc.className = 'desc';
+        desc.textContent = descInput.value;
+        const entry = document.createElement('div');
+        entry.className = 'gallery-entry';
+        entry.appendChild(img);
+        entry.appendChild(desc);
+        gallery.appendChild(entry);
+      };
+      reader.readAsDataURL(file);
+      form.reset();
+    });
+  </script>
+</body>
+</html>
