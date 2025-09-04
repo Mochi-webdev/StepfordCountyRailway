@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Minecraft Image Wiki</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <h1>Minecraft Image Wiki</h1>
@@ -23,46 +23,31 @@
   <div id="gallery"></div>
 
   <script>
-    async function loadGallery() {
-      const res = await fetch('/api/gallery');
-      const data = await res.json();
-      const gallery = document.getElementById('gallery');
-      gallery.innerHTML = '';
-      for (const entry of data) {
-        const img = document.createElement('img');
-        img.src = entry.imageUrl;
-        img.className = 'gallery-img';
-        const desc = document.createElement('div');
-        desc.className = 'desc';
-        desc.textContent = entry.description;
-        const link = document.createElement('a');
-        link.href = entry.imageUrl;
-        link.textContent = 'Public Link';
-        link.target = '_blank';
-        link.className = 'public-link';
-        const entryDiv = document.createElement('div');
-        entryDiv.className = 'gallery-entry';
-        entryDiv.appendChild(img);
-        entryDiv.appendChild(desc);
-        entryDiv.appendChild(link);
-        gallery.appendChild(entryDiv);
-      }
-    }
-
-    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+    // Simple local image gallery - not persistent!
+    const form = document.getElementById('uploadForm');
+    const gallery = document.getElementById('gallery');
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
       const fileInput = document.getElementById('imageInput');
       const descInput = document.getElementById('descInput');
-      const formData = new FormData();
-      formData.append('image', fileInput.files[0]);
-      formData.append('description', descInput.value);
-      await fetch('/api/upload', { method: 'POST', body: formData });
-      fileInput.value = '';
-      descInput.value = '';
-      loadGallery();
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = document.createElement('img');
+        img.src = evt.target.result;
+        img.className = 'gallery-img';
+        const desc = document.createElement('div');
+        desc.className = 'desc';
+        desc.textContent = descInput.value;
+        const entry = document.createElement('div');
+        entry.className = 'gallery-entry';
+        entry.appendChild(img);
+        entry.appendChild(desc);
+        gallery.appendChild(entry);
+      };
+      reader.readAsDataURL(file);
+      form.reset();
     });
-
-    loadGallery();
   </script>
 </body>
 </html>
